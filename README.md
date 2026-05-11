@@ -1,8 +1,8 @@
 # MLT Demo
 
-MapLibre GL JS で MLT エンコードされた PMTiles を表示する、最小構成の静的ビューワーです。
+MapLibre GL JS で [MLT](https://maplibre.org/maplibre-tile-spec/) エンコードされた PMTiles を表示する、最小構成の静的ビューワーです。
 
-このリポジトリには2026-04-15.0時点の[OvertureMaps](https://overturemaps.org/)からダウンロードした以下のサンプルデータが含まれています。
+このリポジトリには2026-04-15.0時点の[OvertureMaps](https://overturemaps.org/)からダウンロードした以下のサンプルデータ（皇居周辺）が含まれています。
 
 - 建物: `pmtiles/building.mlt.pmtiles`
 - 道路: `pmtiles/road.mlt.pmtiles`
