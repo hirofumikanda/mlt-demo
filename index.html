@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLT Demo</title>
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/pmtiles@4.4.1/dist/pmtiles.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body, #map { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile.bind(protocol));
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function buildFeaturePopupHtml(feature) {
+      const properties = feature.properties ?? {};
+      const rows = Object.keys(properties)
+        .sort((a, b) => a.localeCompare(b, "ja"))
+        .map((key) => {
+          const rawValue = properties[key];
+          const value = rawValue == null || rawValue === "" ? "(empty)" : rawValue;
+          return `<tr><th style="text-align:left; padding:2px 8px 2px 0; vertical-align:top;">${escapeHtml(key)}</th><td style="text-align:left;">${escapeHtml(value)}</td></tr>`;
+        })
+        .join("");
+
+      const source = feature.source ?? "unknown";
+      const sourceLayer = feature.sourceLayer ?? "unknown";
+
+      return `
+        <div style="font-size:12px; line-height:1.4; max-width:320px;">
+          <div style="font-weight:700; margin-bottom:6px;">Feature Info</div>
+          <div style="margin-bottom:6px; color:#555;">source: ${escapeHtml(source)} / layer: ${escapeHtml(sourceLayer)}</div>
+          ${rows ? `<table>${rows}</table>` : "<div>No properties</div>"}
+        </div>
+      `;
+    }
+
+    async function initMap() {
+      const response = await fetch("./style.json");
+      const style = await response.json();
+
+      const map = new maplibregl.Map({
+        container: "map",
+        style,
+        center: [139.75548, 35.684685],
+        zoom: 13,
+        hash: true
+      });
+
+      map.addControl(new maplibregl.NavigationControl(), "top-right");
+      map.addControl(new maplibregl.ScaleControl(), "bottom-left");
+      map.showTileBoundaries = true;
+
+      const interactiveLayerIds = style.layers
+        .filter((layer) => layer.type !== "raster")
+        .filter((layer) => layer.layout?.visibility !== "none")
+        .map((layer) => layer.id);
+
+      const popup = new maplibregl.Popup({
+        closeButton: true,
+        closeOnClick: false,
+        maxWidth: "360px"
+      });
+
+      map.on("click", (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: interactiveLayerIds
+        });
+
+        if (!features.length) {
+          popup.remove();
+          return;
+        }
+
+        const feature = features[0];
+        popup
+          .setLngLat(event.lngLat)
+          .setHTML(buildFeaturePopupHtml(feature))
+          .addTo(map);
+      });
+
+      map.on("mousemove", (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: interactiveLayerIds
+        });
+        map.getCanvas().style.cursor = features.length ? "pointer" : "";
+      });
+    }
+
+    initMap().catch((error) => {
+      console.error("Failed to load map style:", error);
+    });
+  </script>
+</body>
+</html>

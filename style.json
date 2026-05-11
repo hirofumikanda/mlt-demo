@@ -1,0 +1,166 @@
+{
+  "version": 8,
+  "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  "sources": {
+    "building": {
+      "type": "vector",
+      "encoding": "mlt",
+      "url": "pmtiles://pmtiles/building.mlt.pmtiles",
+      "attribution": "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, <a href='https://docs.overturemaps.org/attribution/'>Overture Maps Foundation</a>",
+      "minzoom": 9,
+      "maxzoom": 16
+    },
+    "road": {
+      "type": "vector",
+      "encoding": "mlt",
+      "url": "pmtiles://pmtiles/road.mlt.pmtiles",
+      "attribution": "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, <a href='https://docs.overturemaps.org/attribution/'>Overture Maps Foundation</a>",
+      "minzoom": 9,
+      "maxzoom": 16
+    },
+    "landuse": {
+      "type": "vector",
+      "encoding": "mlt",
+      "url": "pmtiles://pmtiles/landuse.mlt.pmtiles",
+      "attribution": "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, <a href='https://docs.overturemaps.org/attribution/'>Overture Maps Foundation</a>",
+      "minzoom": 9,
+      "maxzoom": 16
+    },
+    "place": {
+      "type": "vector",
+      "encoding": "mlt",
+      "url": "pmtiles://pmtiles/place.mlt.pmtiles",
+      "attribution": "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, <a href='https://docs.overturemaps.org/attribution/'>Overture Maps Foundation</a>",
+      "minzoom": 9,
+      "maxzoom": 16
+    }
+  },
+  "layers": [
+    {
+      "id": "landuse-fill",
+      "type": "fill",
+      "source": "landuse",
+      "source-layer": "landuse",
+      "minzoom": 9,
+      "paint": {
+        "fill-color": "#8ec07c",
+        "fill-opacity": 0.35
+      }
+    },
+    {
+      "id": "road-line",
+      "type": "line",
+      "source": "road",
+      "source-layer": "road",
+      "minzoom": 9,
+      "paint": {
+        "line-color": "#f2f2f2",
+        "line-width": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          9,
+          0.6,
+          16,
+          2.5
+        ],
+        "line-opacity": 0.9
+      }
+    },
+    {
+      "id": "building-fill",
+      "type": "fill",
+      "source": "building",
+      "source-layer": "building",
+      "paint": {
+        "fill-color": "#4a90d9",
+        "fill-opacity": 0.6
+      }
+    },
+    {
+      "id": "building-outline",
+      "type": "line",
+      "source": "building",
+      "source-layer": "building",
+      "paint": {
+        "line-color": "#1a5fa8",
+        "line-width": 0.8
+      }
+    },
+    {
+      "id": "place-dot",
+      "type": "circle",
+      "source": "place",
+      "source-layer": "place",
+      "minzoom": 14,
+      "paint": {
+        "circle-color": "#111111",
+        "circle-radius": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          9,
+          1,
+          16,
+          2.2
+        ],
+        "circle-opacity": 0.95,
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 0.4,
+        "circle-stroke-opacity": 0.9
+      }
+    },
+    {
+      "id": "place-label",
+      "type": "symbol",
+      "source": "place",
+      "source-layer": "place",
+      "minzoom": 14,
+      "layout": {
+        "text-field": [
+          "coalesce",
+          [
+            "get",
+            "name"
+          ],
+          ""
+        ],
+        "text-size": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          9,
+          6,
+          16,
+          10
+        ],
+        "text-font": [
+          "Noto Sans Regular"
+        ],
+        "text-offset": [
+          0,
+          0.6
+        ],
+        "text-anchor": "top",
+        "symbol-sort-key": ["*", ["get", "confidence"], -1]
+      },
+      "paint": {
+        "text-color": "#4b1f1f",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1
+      }
+    }
+  ]
+}
